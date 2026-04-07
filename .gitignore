@@ -1,0 +1,16 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+calculadora.db
+calculadora.db-journal
+manual_test.db
+manual_test.db-journal
+
+uvicorn.out
+uvicorn.err
+pdf_enunciado.txt
+codex_write_test.txt

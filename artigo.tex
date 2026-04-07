@@ -1,0 +1,600 @@
+\documentclass[12pt, a4paper]{article}
+
+% ── Pacotes ──────────────────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{lmodern}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+
+% ── Geometria ────────────────────────────────────────────────────────────────
+\geometry{
+  top=3cm, bottom=2cm,
+  left=3cm, right=2cm,
+  headheight=15pt
+}
+
+% ── Cores ────────────────────────────────────────────────────────────────────
+\definecolor{accent}{HTML}{00875A}
+\definecolor{codebg}{HTML}{F4F4F4}
+\definecolor{codeframe}{HTML}{CCCCCC}
+\definecolor{keyword}{HTML}{0033B3}
+\definecolor{string}{HTML}{067D17}
+\definecolor{comment}{HTML}{8C8C8C}
+\definecolor{number}{HTML}{1750EB}
+
+% ── Hyperref ─────────────────────────────────────────────────────────────────
+\hypersetup{
+  colorlinks=true,
+  linkcolor=accent,
+  urlcolor=accent,
+  citecolor=accent,
+  pdftitle={Calculadora API com FastAPI},
+  pdfauthor={Gabriel Alvarenga; Rafael Fernandes}
+}
+
+% ── Listings (código) ────────────────────────────────────────────────────────
+\lstdefinestyle{python}{
+  language=Python,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{codeframe},
+  framerule=0.5pt,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{keyword}\bfseries,
+  stringstyle=\color{string},
+  commentstyle=\color{comment}\itshape,
+  numberstyle=\tiny\color{comment},
+  numbers=left,
+  numbersep=8pt,
+  stepnumber=1,
+  showstringspaces=false,
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=4,
+  captionpos=b,
+  literate=
+    {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+    {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+    {ã}{{\~a}}1 {õ}{{\~o}}1 {Ã}{{\~A}}1 {Õ}{{\~O}}1
+    {â}{{\^a}}1 {ê}{{\^e}}1 {ô}{{\^o}}1
+    {ç}{{\c{c}}}1 {Ç}{{\c{C}}}1
+}
+
+\lstdefinestyle{bash}{
+  language=bash,
+  backgroundcolor=\color{black!90},
+  frame=single,
+  rulecolor=\color{black},
+  framerule=0.5pt,
+  basicstyle=\ttfamily\small\color{white},
+  keywordstyle=\color{green!60!white}\bfseries,
+  stringstyle=\color{yellow!80!white},
+  commentstyle=\color{gray!60},
+  showstringspaces=false,
+  breaklines=true,
+  tabsize=2,
+  captionpos=b
+}
+
+\lstset{style=python}
+
+% ── Cabeçalho/rodapé ─────────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textcolor{accent}{\textbf{Calculadora API}} — Sistemas Distribuídos}
+\fancyhead[R]{\small UNILAGO}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+
+% ── Caixas coloridas ─────────────────────────────────────────────────────────
+\tcbuselibrary{skins, breakable}
+\newtcolorbox{infobox}[1][]{
+  colback=accent!8,
+  colframe=accent,
+  fonttitle=\bfseries,
+  title=#1,
+  breakable
+}
+
+% ── Títulos ──────────────────────────────────────────────────────────────────
+\titleformat{\section}{\Large\bfseries\color{accent}}{}{0em}{\thesection\quad}
+\titleformat{\subsection}{\large\bfseries}{}{0em}{\thesubsection\quad}
+\titleformat{\subsubsection}{\normalsize\bfseries}{}{0em}{\thesubsubsection\quad}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\begin{document}
+
+% ── Capa ─────────────────────────────────────────────────────────────────────
+\begin{titlepage}
+  \centering
+  \vspace*{2cm}
+
+  {\large Universidade do Grandes Lagos — UNILAGO}\\[0.3cm]
+  {\large Curso de Ciência da Computação}\\[0.3cm]
+  {\large Disciplina: Programação de Sistemas Distribuídos}
+
+  \vspace{2cm}
+  \rule{\linewidth}{2pt}\\[0.4cm]
+  {\Huge\bfseries\color{accent} Calculadora API}\\[0.3cm]
+  {\Large com FastAPI e SQLite}\\[0.2cm]
+  \rule{\linewidth}{2pt}
+
+  \vspace{1.5cm}
+
+  \begin{tabular}{rl}
+    \textbf{Discentes:} & Gabriel Henrique Mendes Angelo Alvarenga \\
+                        & Rafael Martins Fernandes \\[0.6cm]
+    \textbf{Professor:} & Eng. Gleydes Oliveira \\[0.6cm]
+    \textbf{Versão da API:} & 2.0.0 \\[0.3cm]
+    \textbf{Data:}      & \today
+  \end{tabular}
+
+  \vfill
+  {\small São José do Rio Preto — SP}
+\end{titlepage}
+
+% ── Resumo ───────────────────────────────────────────────────────────────────
+\begin{abstract}
+\noindent
+Este artigo documenta o desenvolvimento de uma API RESTful de calculadora utilizando o framework FastAPI em Python, como projeto avaliativo da disciplina de Programação de Sistemas Distribuídos. A solução implementa as quatro operações matemáticas básicas — soma, subtração, multiplicação e divisão —, além de potenciação e raiz quadrada. Como evolução em relação ao nível básico proposto, foram incorporados recursos de nível intermediário: persistência de histórico de cálculos por usuário com banco de dados SQLite, habilitação de CORS para comunicação com frontend, e um total de seis operações disponíveis. A interface web foi desenvolvida em HTML e JavaScript puro, consumindo três ou mais endpoints da API. A documentação automática via Swagger UI e o tratamento adequado de códigos de status HTTP são também abordados.
+
+\vspace{0.5em}
+\noindent\textbf{Palavras-chave:} FastAPI, API REST, Sistemas Distribuídos, SQLite, Python, CORS.
+\end{abstract}
+
+\newpage
+\tableofcontents
+\newpage
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Introdução}
+
+Em sistemas distribuídos, a comunicação entre componentes independentes é um dos desafios centrais da engenharia de software. APIs (\textit{Application Programming Interfaces}) do estilo REST (\textit{Representational State Transfer}) tornaram-se o padrão de facto para essa comunicação, oferecendo simplicidade, independência de linguagem e escalabilidade.
+
+Este projeto tem por objetivo a construção de uma API de calculadora, partindo do nível básico especificado pelo professor e avançando para o nível intermediário com a adição de:
+
+\begin{itemize}[leftmargin=*]
+  \item Histórico de cálculos persistido por usuário em banco de dados SQLite;
+  \item CORS habilitado para consumo pelo frontend;
+  \item Duas operações adicionais: potenciação (\texttt{POST /potencia}) e raiz quadrada (\texttt{POST /raiz});
+  \item Frontend em HTML + JavaScript puro que consome a API.
+\end{itemize}
+
+O desenvolvimento foi realizado com Python 3.11, FastAPI 0.115, Uvicorn 0.30 e Pydantic 2.9.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Fundamentos Teóricos}
+
+\subsection{API REST}
+
+REST é um estilo arquitetural descrito por Roy Fielding em sua dissertação de 2000. Uma API RESTful utiliza os verbos HTTP de forma semântica:
+
+\begin{table}[H]
+  \centering
+  \caption{Verbos HTTP e seus usos}
+  \begin{tabularx}{\linewidth}{lX}
+    \toprule
+    \textbf{Verbo} & \textbf{Uso} \\
+    \midrule
+    GET    & Consultar dados sem modificar o servidor \\
+    POST   & Enviar dados para processamento \\
+    PUT    & Atualizar um recurso completo \\
+    DELETE & Remover um recurso \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\subsection{FastAPI}
+
+FastAPI é um framework Python moderno e de alto desempenho para construção de APIs. Seus principais diferenciais são: geração automática de documentação Swagger e ReDoc; validação de dados via Pydantic; suporte nativo a programação assíncrona (async/await); e desempenho comparável a servidores escritos em Go e Node.js.
+
+\subsection{Pydantic}
+
+Pydantic é a biblioteca de validação de dados utilizada pelo FastAPI. Com ela, define-se modelos (classes Python com tipos anotados) que descrevem a estrutura dos dados. Quando o cliente envia dados inválidos, o FastAPI retorna automaticamente o código HTTP 422 com detalhes precisos do erro — sem necessidade de código de validação manual.
+
+\subsection{SQLite}
+
+SQLite é um banco de dados relacional embutido, baseado em um único arquivo. É ideal para projetos de pequeno e médio porte que não necessitam de um servidor de banco de dados dedicado. Neste projeto, o SQLite é utilizado para persistir o histórico de cálculos por usuário.
+
+\subsection{CORS}
+
+CORS (\textit{Cross-Origin Resource Sharing}) é um mecanismo de segurança dos navegadores que impede requisições a domínios diferentes do da página origem. Para que o frontend (servido localmente) possa consumir a API, é necessário configurar os cabeçalhos CORS no servidor.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Configuração do Ambiente}
+
+\subsection{Pré-requisitos}
+
+\begin{itemize}[leftmargin=*]
+  \item Python 3.8 ou superior;
+  \item pip (gerenciador de pacotes Python).
+\end{itemize}
+
+\subsection{Criação do Ambiente Virtual}
+
+\begin{lstlisting}[style=bash, caption={Criação e ativação do ambiente virtual}]
+# Criar pasta do projeto
+mkdir calculadora-api && cd calculadora-api
+
+# Criar ambiente virtual
+python -m venv venv
+
+# Ativar (Linux/macOS)
+source venv/bin/activate
+
+# Ativar (Windows)
+venv\Scripts\activate
+\end{lstlisting}
+
+\subsection{Instalação das Dependências}
+
+O arquivo \texttt{requirements.txt} declara as versões fixas de cada pacote:
+
+\begin{lstlisting}[style=bash]
+fastapi==0.115.0
+uvicorn==0.30.6
+pydantic==2.9.2
+\end{lstlisting}
+
+\begin{lstlisting}[style=bash]
+pip install -r requirements.txt
+\end{lstlisting}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Estrutura do Projeto}
+
+\begin{lstlisting}[style=bash, caption={Estrutura de arquivos do projeto}]
+calculadora-api/
+|-- venv/              # Ambiente virtual (NAO commitar!)
+|-- main.py            # API principal
+|-- requirements.txt   # Dependencias
+|-- test_client.py     # Script de testes Python
+|-- calculadora.db     # Banco SQLite (gerado automaticamente)
+|-- frontend/
+|   +-- index.html     # Interface web
++-- README.md
+\end{lstlisting}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Implementação da API}
+
+\subsection{Inicialização e CORS}
+
+A instância do FastAPI é criada com metadados que aparecem automaticamente na documentação Swagger. O middleware de CORS é adicionado logo após, permitindo que qualquer origem consuma a API durante o desenvolvimento:
+
+\begin{lstlisting}[caption={Criação do app e configuração do CORS}]
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI(
+    title="Calculadora API",
+    description="API para Sistemas Distribuidos",
+    version="2.0.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+\end{lstlisting}
+
+\subsection{Banco de Dados SQLite}
+
+O banco é criado automaticamente na primeira execução. A função \texttt{get\_db()} é utilizada como dependência nos endpoints via \texttt{Depends()}:
+
+\begin{lstlisting}[caption={Inicialização do SQLite e injeção de dependência}]
+import sqlite3
+
+DB_PATH = "calculadora.db"
+
+def get_db():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    try:
+        yield conn
+    finally:
+        conn.close()
+
+def init_db():
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS historico (
+            id        INTEGER PRIMARY KEY AUTOINCREMENT,
+            usuario   TEXT    NOT NULL,
+            operacao  TEXT    NOT NULL,
+            numero1   REAL    NOT NULL,
+            numero2   REAL,
+            resultado REAL    NOT NULL,
+            data_hora TEXT    NOT NULL
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+init_db()
+\end{lstlisting}
+
+\subsection{Modelos Pydantic}
+
+São definidos três modelos: \texttt{OperacaoRequest} (entrada binária), \texttt{OperacaoUnariaRequest} (entrada unária, para raiz) e \texttt{ResultadoResponse} (saída):
+
+\begin{lstlisting}[caption={Modelos Pydantic de entrada e saída}]
+from pydantic import BaseModel
+from typing import Optional
+
+class OperacaoRequest(BaseModel):
+    numero1: float
+    numero2: float
+    usuario: str = "anonimo"
+
+class OperacaoUnariaRequest(BaseModel):
+    numero1: float
+    usuario: str = "anonimo"
+
+class ResultadoResponse(BaseModel):
+    operacao: str
+    numero1: float
+    numero2: Optional[float] = None
+    resultado: float
+    usuario: str
+    data_hora: str
+\end{lstlisting}
+
+\subsection{Endpoints de Cálculo}
+
+Cada endpoint segue o mesmo padrão: recebe os dados validados pelo Pydantic, realiza o cálculo, persiste no banco via \texttt{salvar\_historico()} e retorna um \texttt{ResultadoResponse}. O exemplo abaixo mostra a divisão, que inclui validação extra:
+
+\begin{lstlisting}[caption={Endpoint de divisão com tratamento de erro}]
+@app.post("/dividir", response_model=ResultadoResponse)
+def dividir(dados: OperacaoRequest, conn=Depends(get_db)):
+    if dados.numero2 == 0:
+        raise HTTPException(
+            status_code=400,
+            detail="Divisao por zero nao e permitida!"
+        )
+    resultado = dados.numero1 / dados.numero2
+    data_hora = salvar_historico(
+        conn, dados.usuario, "divisao",
+        dados.numero1, resultado, dados.numero2
+    )
+    return ResultadoResponse(
+        operacao="divisao",
+        numero1=dados.numero1,
+        numero2=dados.numero2,
+        resultado=resultado,
+        usuario=dados.usuario,
+        data_hora=data_hora,
+    )
+\end{lstlisting}
+
+\subsection{Raiz Quadrada}
+
+A raiz quadrada é uma operação unária (recebe apenas um número) e valida se o número é não-negativo:
+
+\begin{lstlisting}[caption={Endpoint de raiz quadrada}]
+import math
+
+@app.post("/raiz", response_model=ResultadoResponse)
+def raiz_quadrada(dados: OperacaoUnariaRequest, conn=Depends(get_db)):
+    if dados.numero1 < 0:
+        raise HTTPException(
+            status_code=400,
+            detail="Raiz de numero negativo nao e permitida!"
+        )
+    resultado = math.sqrt(dados.numero1)
+    data_hora = salvar_historico(
+        conn, dados.usuario, "raiz_quadrada",
+        dados.numero1, resultado
+    )
+    return ResultadoResponse(
+        operacao="raiz_quadrada",
+        numero1=dados.numero1,
+        resultado=resultado,
+        usuario=dados.usuario,
+        data_hora=data_hora,
+    )
+\end{lstlisting}
+
+\subsection{Histórico por Usuário}
+
+O endpoint abaixo retorna todos os cálculos de um determinado usuário, ordenados do mais recente ao mais antigo:
+
+\begin{lstlisting}[caption={Endpoint de histórico por usuário}]
+@app.get("/historico/{usuario}")
+def historico_usuario(usuario: str, conn=Depends(get_db)):
+    rows = conn.execute(
+        "SELECT * FROM historico WHERE usuario = ? ORDER BY id DESC",
+        (usuario,),
+    ).fetchall()
+    if not rows:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Nenhum historico encontrado para '{usuario}'."
+        )
+    return {
+        "usuario": usuario,
+        "total": len(rows),
+        "historico": [dict(r) for r in rows]
+    }
+\end{lstlisting}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Resumo dos Endpoints}
+
+\begin{table}[H]
+  \centering
+  \caption{Todos os endpoints da API v2.0}
+  \begin{tabularx}{\linewidth}{llX}
+    \toprule
+    \textbf{Método} & \textbf{Rota} & \textbf{Descrição} \\
+    \midrule
+    GET  & \texttt{/}                    & Boas-vindas \\
+    POST & \texttt{/somar}               & Soma dois números \\
+    POST & \texttt{/subtrair}            & Subtrai dois números \\
+    POST & \texttt{/multiplicar}         & Multiplica dois números \\
+    POST & \texttt{/dividir}             & Divide (valida divisão por zero) \\
+    POST & \texttt{/potencia}            & Calcula \texttt{numero1\^{}numero2} \\
+    POST & \texttt{/raiz}                & Raiz quadrada de \texttt{numero1} \\
+    GET  & \texttt{/calcular}            & Operação via \textit{query parameters} \\
+    GET  & \texttt{/historico/\{usuario\}} & Histórico filtrado por usuário \\
+    GET  & \texttt{/historico}           & Todo o histórico \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Códigos de Status HTTP}
+
+\begin{table}[H]
+  \centering
+  \caption{Códigos de status retornados pela API}
+  \begin{tabularx}{\linewidth}{llX}
+    \toprule
+    \textbf{Código} & \textbf{Nome} & \textbf{Quando ocorre} \\
+    \midrule
+    200 & OK                    & Operação realizada com sucesso \\
+    400 & Bad Request           & Divisão por zero, raiz de negativo ou operação inválida \\
+    404 & Not Found             & Usuário sem histórico ou endpoint inexistente \\
+    422 & Unprocessable Entity  & Dado inválido (ex.: texto no lugar de número) \\
+    500 & Internal Server Error & Erro inesperado no servidor \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Frontend}
+
+A interface web foi desenvolvida em HTML5 e JavaScript puro (sem frameworks), consumindo os seguintes endpoints da API:
+
+\begin{enumerate}[leftmargin=*]
+  \item \texttt{POST /somar}, \texttt{/subtrair}, \texttt{/multiplicar}, \texttt{/dividir}, \texttt{/potencia}, \texttt{/raiz} — para realizar os cálculos;
+  \item \texttt{GET /historico/\{usuario\}} — para exibir o histórico filtrado por usuário;
+  \item \texttt{GET /historico} — para exibir o histórico geral.
+\end{enumerate}
+
+A comunicação é feita via \texttt{fetch()} com método \texttt{POST} e \texttt{Content-Type: application/json}. Os resultados são exibidos dinamicamente na página sem recarregamento.
+
+O frontend apresenta:
+\begin{itemize}[leftmargin=*]
+  \item Campo de identificação de usuário;
+  \item Seleção visual da operação por \textit{chips} clicáveis;
+  \item Campos numéricos com ocultamento automático do segundo número para operações unárias;
+  \item Exibição do resultado com metadados (expressão, usuário, data/hora);
+  \item Painel lateral de histórico com busca por usuário e listagem de todos os registros.
+\end{itemize}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Testes}
+
+\subsection{Swagger UI}
+
+Após iniciar o servidor com \texttt{uvicorn main:app --reload}, o Swagger UI é acessível em \url{http://localhost:8000/docs}. A interface permite testar todos os endpoints interativamente no navegador.
+
+\subsection{cURL}
+
+Exemplos de teste via terminal:
+
+\begin{lstlisting}[style=bash, caption={Exemplos de testes com cURL}]
+# Soma
+curl -X POST "http://localhost:8000/somar" \
+     -H "Content-Type: application/json" \
+     -d '{"numero1": 10, "numero2": 5, "usuario": "gabriel"}'
+
+# Divisao por zero (erro 400 esperado)
+curl -X POST "http://localhost:8000/dividir" \
+     -H "Content-Type: application/json" \
+     -d '{"numero1": 10, "numero2": 0, "usuario": "gabriel"}'
+
+# Historico do usuario
+curl "http://localhost:8000/historico/gabriel"
+\end{lstlisting}
+
+\subsection{Script Python}
+
+O arquivo \texttt{test\_client.py} automatiza os testes básicos usando apenas a biblioteca padrão (\texttt{urllib}), sem dependências externas, e imprime os resultados no terminal.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Contexto em Sistemas Distribuídos}
+
+\subsection{Comunicação Síncrona}
+
+A calculadora utiliza comunicação síncrona: o cliente envia a requisição e aguarda a resposta antes de continuar. Esse modelo é adequado para operações rápidas como cálculos matemáticos. Em sistemas distribuídos de maior escala, operações demoradas são tratadas com comunicação assíncrona via filas de mensagens (ex.: RabbitMQ, Apache Kafka).
+
+\subsection{Baixo Acoplamento}
+
+A separação entre frontend e backend via API REST é um exemplo prático de baixo acoplamento: o frontend não conhece os detalhes internos da API, e a API não conhece os detalhes do frontend. Qualquer cliente que entenda HTTP pode consumir a API — seja um navegador, um \textit{script} Python, o Insomnia ou um serviço escrito em Java.
+
+\subsection{Servidor ASGI}
+
+O Uvicorn atua como servidor ASGI (\textit{Asynchronous Server Gateway Interface}), fazendo a ponte entre o sistema operacional e o FastAPI. Em ambiente de produção, o Uvicorn seria colocado atrás de um proxy reverso como o Nginx para lidar com múltiplas conexões simultâneas e fornecer TLS.
+
+\subsection{Escalabilidade}
+
+Uma API RESTful como a desenvolvida pode ser escalada horizontalmente: múltiplas instâncias do servidor podem ser executadas em paralelo atrás de um balanceador de carga (\textit{load balancer}), com o banco de dados compartilhado entre elas. Em um cenário de microsserviços, a calculadora seria apenas um dos vários serviços independentes que compõem o sistema.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Evolução: Básico → Intermediário}
+
+A tabela abaixo compara os recursos implementados no nível básico (conforme especificado no projeto) e os recursos adicionados no nível intermediário:
+
+\begin{table}[H]
+  \centering
+  \caption{Comparação entre os níveis básico e intermediário}
+  \begin{tabularx}{\linewidth}{lXX}
+    \toprule
+    \textbf{Recurso} & \textbf{Nível Básico} & \textbf{Nível Intermediário} \\
+    \midrule
+    Banco de dados    & Não             & SQLite (arquivo local) \\
+    Histórico         & Não             & Sim, por usuário autenticado \\
+    Resposta inclui   & Apenas resultado & Resultado + usuário + data/hora \\
+    Operações         & 4 (básicas)      & 6 (+ potência e raiz) \\
+    CORS              & Não             & Habilitado para frontend \\
+    Frontend          & Não             & HTML + JS puro \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Conclusão}
+
+O projeto demonstrou na prática os conceitos fundamentais de APIs RESTful em um contexto de sistemas distribuídos. A utilização do FastAPI permitiu criar uma API robusta com validação automática de dados, documentação interativa e alto desempenho, com pouco código.
+
+A adição de recursos do nível intermediário — histórico persistido em SQLite, CORS e operações extras — tornou a solução mais realista e representativa dos sistemas distribuídos modernos. O frontend em HTML e JavaScript puro evidenciou o baixo acoplamento característico da arquitetura REST: o cliente e o servidor são desenvolvidos e implantados de forma completamente independente.
+
+Como trabalhos futuros, sugere-se a adição de autenticação JWT, migração do SQLite para um banco de dados relacional como PostgreSQL, e a implantação da API em uma plataforma de nuvem (ex.: Render, Railway ou AWS).
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section*{Referências}
+
+\begin{enumerate}[leftmargin=*, label={[\arabic*]}]
+  \item FASTAPI. \textit{FastAPI Documentation}. Disponível em: \url{https://fastapi.tiangolo.com}. Acesso em: mar. 2026.
+  \item PYDANTIC. \textit{Pydantic v2 Documentation}. Disponível em: \url{https://docs.pydantic.dev}. Acesso em: mar. 2026.
+  \item UVICORN. \textit{Uvicorn — ASGI server}. Disponível em: \url{https://www.uvicorn.org}. Acesso em: mar. 2026.
+  \item FIELDING, R. T. \textit{Architectural Styles and the Design of Network-based Software Architectures}. Dissertação (Doutorado) — University of California, Irvine, 2000.
+  \item SQLITE. \textit{SQLite Documentation}. Disponível em: \url{https://www.sqlite.org/docs.html}. Acesso em: mar. 2026.
+  \item MDN WEB DOCS. \textit{Cross-Origin Resource Sharing (CORS)}. Disponível em: \url{https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS}. Acesso em: mar. 2026.
+\end{enumerate}
+
+\end{document}
