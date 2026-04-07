@@ -8,10 +8,10 @@ API RESTful de calculadora construída com **FastAPI**, **SQLite** e frontend em
 
 ## 👥 Integrantes
 
-| Nome | RA |
-|------|----|
-| Gabriel Henrique Mendes Angelo Alvarenga | — |
-| Rafael Martins Fernandes | — |
+| Nome |
+|------|
+| Gabriel Henrique Mendes Angelo Alvarenga | 5º ADS |
+| Rafael Martins Fernandes | 5º ADS |
 
 ---
 
