@@ -471,6 +471,23 @@
   let opAtual = 'somar';
   let isUnary = false;
 
+  function getSymbol(operacao) {
+    const symbols = {
+      somar: '+',
+      soma: '+',
+      subtrair: '-',
+      subtracao: '-',
+      multiplicar: 'x',
+      multiplicacao: 'x',
+      dividir: '/',
+      divisao: '/',
+      potencia: '^',
+      raiz: 'sqrt',
+      raiz_quadrada: 'sqrt',
+    };
+    return symbols[operacao] ?? '?';
+  }
+
   const SYMBOL = { somar:'+', subtrair:'−', multiplicar:'×', dividir:'÷', potencia:'^', raiz:'√' };
   const OP_LABEL = { soma:'Soma', subtracao:'Subtração', multiplicacao:'Multiplicação', divisao:'Divisão', potencia:'Potência', raiz_quadrada:'Raiz Quad.' };
 
@@ -525,8 +542,8 @@
       val.textContent   = formatNum(data.resultado);
 
       const expr = isUnary
-        ? `${SYMBOL[opAtual]}(${num1})`
-        : `${num1} ${SYMBOL[opAtual]} ${num2}`;
+        ? `${getSymbol(opAtual)}(${num1})`
+        : `${num1} ${getSymbol(opAtual)} ${num2}`;
 
       meta.innerHTML = `
         <span>🧮 ${expr} = ${formatNum(data.resultado)}</span>
@@ -579,7 +596,7 @@
       return;
     }
     list.innerHTML = items.map(item => {
-      const sym  = SYMBOL[item.operacao] ?? '?';
+      const sym  = getSymbol(item.operacao);
       const expr = item.numero2 != null
         ? `${item.numero1} ${sym} ${item.numero2}`
         : `${sym}(${item.numero1})`;
